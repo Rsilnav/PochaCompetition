@@ -10,3 +10,6 @@ class IPlayer:
 
 	# Sets trump card for current round
 	def setTrump(self, trumpCard): raise NotImplementedError
+
+	# Ask the player for his initial bet.
+	def getBet(self, otherPlayersBets): raise NotImplementedError

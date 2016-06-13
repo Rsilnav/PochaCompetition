@@ -1,5 +1,7 @@
 # PochaCompetition
 
+[![Build Status](https://travis-ci.org/Rsilnav/PochaCompetition.svg?branch=master)](https://travis-ci.org/Rsilnav/PochaCompetition)
+
 [![forthebadge](http://forthebadge.com/images/badges/built-with-swag.svg)](https://github.com/Rsilnav/PochaCompetition)
 
 ## Introducción

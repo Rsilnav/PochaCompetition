@@ -41,3 +41,9 @@ __Se supone que nadie tratará de hacer trampas (Aunque podrá comprobarse y pen
 El código de los jugadores debe implementar la interfaz dada y todas sus funciones, así como solamente hacer uso de la información pasada como parámetros. Debe devolver estructuras de datos acordes a la documentación de la misma.
 
 Se permite todo tipo de acercamientos y algoritmos (Aleatorios, Tontos, Voraces, Redes neuronales, etc.) mientras cumpla las normas especificadas.
+
+## Terminología
+El código esqueleto está en inglés, y se usa la siguiente terminología:
+- Round: Cada una de las rondas del juego.
+- Turn: Cada una de las bazas de una ronda, es comenzada por el jugador ganador de la baza anterior, salvo en el caso de la primera baza, que se va rotando por rondas.
+- Trump: Triunfo o pinte, carta que marca el palo que se sigue en la ronda.

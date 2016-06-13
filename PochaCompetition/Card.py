@@ -14,3 +14,7 @@ class Card():
 	def getSuit(self):
 		return self.suit
 
+	def show(self):
+		numberName = ["As", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Sota", "Caballo", "Rey"]
+		suitName = ["Oros", "Copas", "Espadas", "Bastos"]
+		return '{0} de {1}'.format(numberName[self.number], suitName[self.suit])

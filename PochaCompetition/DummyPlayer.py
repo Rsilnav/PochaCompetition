@@ -28,14 +28,14 @@ class DummyPlayer(IPlayer):
 
 	def getBet(self, previousBets):
 		restriction = -1
-		# Nos aseguramos de no ser los últimos en apostar. Si lo somos,
+		# Nos aseguramos de no ser los ultimos en apostar. Si lo somos,
 		# la suma de las apuestas no puede ser igual a la cantidad de cartas repartidas
 		if len(previousBets) == (self.totalPlayers - 1):
 			restriction = len(self.hand) - sum(previousBets)
 		myBet = 0
 		if myBet != restriction:
 			return myBet
-		else
+		else:
 			return myBet + 1
 
 	def getCard(self, otherPlayerCards, playerOrder): raise NotImplementedError

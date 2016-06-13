@@ -45,7 +45,7 @@ def playRound(players, deck, dealtCardsPerPlayer, firstPlayer):
 			playedCards.append(players[order[i]].getCard(playedCards, order))
 			# We should check here that the player has that card and is a suitable card.
 		lastWinner = winnerCard(trumpCard, playedCards)
-		bazas[order[lastWinner]]++
+		bazas[order[lastWinner]] += 1
 	
 	# Compare bets with won turns and get points of this round
 	points = []
@@ -87,7 +87,7 @@ def winnerCard(trumpCard, playedCards):
 		if playedCards[i].getSuit() == playedCards[winner].getSuit():
 			if playedCards[i].getNumber() > playedCards[winner].getNumber():
 				winner = i
-		else if playedCards[winner].getSuit() != trumpCard.getSuit():
+		elif playedCards[winner].getSuit() != trumpCard.getSuit():
 			if playedCards[i].getSuit() == trumpCard.getSuit():
 				winner = i
 	return winner

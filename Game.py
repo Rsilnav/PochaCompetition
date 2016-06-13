@@ -9,38 +9,52 @@ def playRound(players, deck, dealtCardsPerPlayer, firstPlayer):
 		raise Exception
 
 	# Deal cards
+	if(dealtCardsNumber < 40):
+		trumpCard = deck.cards[dealtCardsNumber]
+	else:
+		trumpCard = deck.cards[39]
 	dealtCards = [[] for i in xrange(len(players))]
 	for i in xrange(len(players)):
 		pId = (i+firstPlayer) % len(players)
 		dealtCards[pId] = deck.cards[i*dealtCardsPerPlayer:(i+1)*dealtCardsPerPlayer]
 		players[pId].setInitialHand(dealtCards[pId])
 		if(dealtCardsNumber < 40):
-			players[pId].setTrump(deck.cards[dealtCardsNumber])
+			players[pId].setTrump(trumpCard)
 		else:
-			players[pId].setTrump(deck.cards[39])
+			players[pId].setTrump(trumpCard)
 
-	# Ask for the bets
-	lastWinner = firstPlayer
+	# Ask for the bets:
 	order = []
-	bets = [0,0,0,0]
+	bets = [0 for i in xrange(len(players))]
+	bazas = [0 for i in xrange(len(players))]
 	previousBets = []
 	for i in xrange(len(players)):
-		order.append((i+lastWinner) % len(players))
+		order.append((i+firstPlayer) % len(players))
 		bet = players[order[i]].getBet(previousBets)
 		bets[order[i]] = bet
 		previousBets.append(bet)
-	# Play all turns
+
+	# Play each round as follows:
+	lastWinner = firstPlayer
 	for i in xrange(dealtCardsPerPlayer):
 		order = []
 		for i in xrange(len(players)):
 			order.append((i+lastWinner) % len(players))
+		playedCards = []
 		for i in order:
-			#pedir carta diciendo cuales hay en la mesa
-			pass
-		# Calculate winner
-
+			playedCards.append(players[order[i]].getCard(playedCards, order))
+			# We should check here that the player has that card and is a suitable card.
+		lastWinner = winnerCard(trumpCard, playedCards)
+		bazas[order[lastWinner]]++
+	
 	# Compare bets with won turns and get points of this round
-	return [0,0,0,0]
+	points = []
+	for i in xrange(len(players)):
+		if bets[i] == bazas[i]:
+			points.append(10+5*bets[i])
+		else:
+			points.append(-5*abs(bets[i]-bazas[i]))
+	return points
 
 def playStaticGame(cardsPerRound = 10, rounds = 20):
 	inititalDeck = Deck()
@@ -65,3 +79,15 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+def winnerCard(trumpCard, playedCards):
+	cards = len(playedCards)
+	winner = 0
+	for i in xrange(1,cards):
+		if playedCards[i].getSuit() == playedCards[winner].getSuit():
+			if playedCards[i].getNumber() > playedCards[winner].getNumber():
+				winner = i
+		else if playedCards[winner].getSuit() != trumpCard.getSuit():
+			if playedCards[i].getSuit() == trumpCard.getSuit():
+				winner = i
+	return winner

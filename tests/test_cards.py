@@ -47,3 +47,7 @@ class TestUM(unittest.TestCase):
         self.assertEqual(a.getNumber(), 8)
         a = Card(9, 0)
         self.assertEqual(a.getNumber(), 9)
+
+    def test_card_print(self):
+        a = Card(0, 0)
+        self.assertEqual(str(a), "As de Oros")

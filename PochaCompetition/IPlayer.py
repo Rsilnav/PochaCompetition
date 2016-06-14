@@ -24,3 +24,5 @@ class IPlayer:
 	
 	# Print player's cards.
 	def printHand(self): raise NotImplementedError
+
+	def giveBets(self, bets): raise NotImplementedError

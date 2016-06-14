@@ -16,11 +16,11 @@ class IPlayer:
 
 	# Ask the player for his initial bet. At this point he has cards, trump card and
 	# knows order of playing.
-	def getBet(self, otherPlayersBets): raise NotImplementedError
+	def getBet(self): raise NotImplementedError
 
 	# Ask the player for a card. He is given the current cards of the table,
 	# and the order of the turn.
-	def getCard(self, otherPlayerCards, playerOorder): raise NotImplementedError
+	def getCard(self, otherPlayerCards, playerOrder): raise NotImplementedError
 	
 	# Print player's cards.
 	def printHand(self): raise NotImplementedError

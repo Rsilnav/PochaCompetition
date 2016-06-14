@@ -35,7 +35,7 @@ class DummyPlayer(IPlayer):
 		return 0
 
 	def getCard(self, otherPlayerCards, playerOrder): 
-		pass
+		return self.hand[0]
 
 	def printHand(self):
 		for card in self.hand:

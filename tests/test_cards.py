@@ -8,13 +8,13 @@ class TestUM(unittest.TestCase):
 
     def test_card_names(self):
     	a = Card(0, 0)
-    	self.assertEqual(a.show(), "As de Oros")
+    	self.assertEqual(a.show(), "Dos de Oros")
     	a = Card(0, 1)
-    	self.assertEqual(a.show(), "As de Copas")
+    	self.assertEqual(a.show(), "Dos de Copas")
     	a = Card(0, 2)
-    	self.assertEqual(a.show(), "As de Espadas")
+    	self.assertEqual(a.show(), "Dos de Espadas")
     	a = Card(0, 3)
-    	self.assertEqual(a.show(), "As de Bastos")
+    	self.assertEqual(a.show(), "Dos de Bastos")
 
     def test_card_suits(self):
         a = Card(0, 0)
@@ -50,4 +50,7 @@ class TestUM(unittest.TestCase):
 
     def test_card_print(self):
         a = Card(0, 0)
-        self.assertEqual(str(a), "As de Oros")
+        self.assertEqual(str(a), "Dos de Oros")
+
+if __name__ == '__main__':
+    unittest.main()

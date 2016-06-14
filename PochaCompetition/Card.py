@@ -4,9 +4,12 @@ class Card():
 		self.suit = suit
 
 	def __str__(self):
-		numberName = ["As", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Sota", "Caballo", "Rey"]
+		numberName = ["Dos", "Cuatro", "Cinco", "Seis", "Siete", "Sota", "Caballo", "Rey", "Tres", "As"]
 		suitName = ["Oros", "Copas", "Espadas", "Bastos"]
 		return '{0} de {1}'.format(numberName[self.number], suitName[self.suit])
+
+	def __eq__(self, other):
+		return self.suit == other.suit and self.number == other.number
 
 	def getNumber(self):
 		return self.number
@@ -15,6 +18,6 @@ class Card():
 		return self.suit
 
 	def show(self):
-		numberName = ["As", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Sota", "Caballo", "Rey"]
+		numberName = ["Dos", "Cuatro", "Cinco", "Seis", "Siete", "Sota", "Caballo", "Rey", "Tres", "As"]
 		suitName = ["Oros", "Copas", "Espadas", "Bastos"]
 		return '{0} de {1}'.format(numberName[self.number], suitName[self.suit])

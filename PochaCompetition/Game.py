@@ -3,98 +3,104 @@ from Card import *
 from Deck import *
 import copy
 
-'''
-def playRound(players, deck, dealtCardsPerPlayer, firstPlayer):
-	# Correction check
-	dealtCardsNumber = len(players) * dealtCardsPerPlayer
-	if dealtCardsNumber > 40:
-		raise Exception
+# Dada una lista de cartas que han sido lanzadas en ese orden y una carta de pinte, devuelve la posicion
+# de la carta dentro de la lista que resulta ganadora con las reglas de la pocha.
+def cartaGanadora(cartaDePinte, cartasJugadas):
+	cartas = len(cartasJugadas)
+	ganador = 0
+	for i in xrange(1,cartas):
+		if cartasJugadas[i].getSuit() == cartasJugadas[ganador].getSuit():
+			if cartasJugadas[i].getNumber() > cartasJugadas[ganador].getNumber():
+				ganador = i
+		elif cartasJugadas[ganador].getSuit() != cartaDePinte.getSuit():
+			if cartasJugadas[i].getSuit() == cartaDePinte.getSuit():
+				ganador = i
+	return ganador
 
-	# Deal cards
-	if(dealtCardsNumber < 40):
-		trumpCard = deck.cards[dealtCardsNumber]
+# Dada una carta de pinte, una lista de cartas jugadas y la mano del ultimo jugador que lanzo carta, comprueba
+# que dicho jugador no haya efectuado un incumplimiento de las normas.
+def comprobarCarta(cartaDePinte, cartasJugadas, manoJugador):
+	cartas = len(cartasJugadas)
+	if cartasJugadas[-1] not in manoJugador:
+		return False
+	if cartas == 1:
+		return True
 	else:
-		trumpCard = deck.cards[39]
-	dealtCards = [[] for i in xrange(len(players))]
-	for i in xrange(len(players)):
-		pId = (i+firstPlayer) % len(players)
-		dealtCards[pId] = deck.cards[i*dealtCardsPerPlayer:(i+1)*dealtCardsPerPlayer]
-		players[pId].setInitialHand(dealtCards[pId])
-		if(dealtCardsNumber < 40):
-			players[pId].setTrump(trumpCard)
+		cartaInicial = cartasJugadas[0]
+		cartaJugada = cartasJugadas[-1]
+		cartaGanadoraActual = cartasJugadas[cartaGanadora(cartaDePinte,cartasJugadas[:-1])]
+
+		# Se ha roto la ronda ( carta ganadora es del palo del pinte, pero no se salio por pinte)
+		if cartaInicial.getSuit() != cartaDePinte.getSuit() and cartaGanadoraActual.getSuit() == cartaDePinte.getSuit():
+			# Sigue el palo del pinte (o de la carta ganadora actual)
+			if cartaJugada.getSuit() == cartaDePinte.getSuit():
+				#Comprobamos primero que no tenga cartas del palo de salida:
+				for carta in manoJugador:
+					if carta.getSuit() == cartaInicial.getSuit():
+						return False
+				if cartaJugada.getNumber() > cartaGanadoraActual.getNumber():
+					return True
+				else:
+					# Comprobamos que no tenga en su mano una carta mas alta de pinte a la ganadora:
+					for carta in manoJugador:
+						if carta.getSuit() == cartaGanadoraActual.getSuit() and carta.getNumber() > cartaGanadoraActual.getNumber():
+							return False
+					return True
+			# No sigue el palo de pinte ( o de la carta ganadora actual)
+			else:
+				# Tira una carta del palo inicial
+				if cartaJugada.getSuit() == cartaInicial.getSuit():
+					return True
+				# No tira una carta del palo del pinte ni del inicial
+				else:
+					# Comprobamos que no tenga cartas del palo de salida, en cuyo caso seria trampa
+					# Comprobamos que no tengas cartas del palo de pinte por encima a la carta ganadora actual.
+					for carta in manoJugador:
+						if carta.getSuit() == cartaInicial.getSuit():
+							return False
+						if carta.getSuit() == cartaGanadoraActual.getSuit() and carta.getNumber() > cartaGanadoraActual.getNumber():
+							return False
+					return True
+
+		# No se ha roto la ronda
 		else:
-			players[pId].setTrump(trumpCard)
-
-	# Ask for the bets:
-	order = []
-	bets = [0 for i in xrange(len(players))]
-	bazas = [0 for i in xrange(len(players))]
-	previousBets = []
-	for i in xrange(len(players)):
-		order.append((i+firstPlayer) % len(players))
-		bet = players[order[i]].getBet(previousBets)
-		bets[order[i]] = bet
-		previousBets.append(bet)
-
-	# Play each round as follows:
-	lastWinner = firstPlayer
-	for i in xrange(dealtCardsPerPlayer):
-		order = []
-		for i in xrange(len(players)):
-			order.append((i+lastWinner) % len(players))
-		playedCards = []
-		for i in order:
-			playedCards.append(players[order[i]].getCard(playedCards, order))
-			# We should check here that the player has that card and is a suitable card.
-		lastWinner = winnerCard(trumpCard, playedCards)
-		bazas[order[lastWinner]] += 1
-	
-	# Compare bets with won turns and get points of this round
-	points = []
-	for i in xrange(len(players)):
-		if bets[i] == bazas[i]:
-			points.append(10+5*bets[i])
-		else:
-			points.append(-5*abs(bets[i]-bazas[i]))
-	return points
-
-def playStaticGame(cardsPerRound = 10, rounds = 20):
-	inititalDeck = Deck()
-	#inititalDeck.shuffle()
-
-	player1 = DummyPlayer(4,0)
-	player2 = DummyPlayer(4,1)
-	player3 = DummyPlayer(4,2)
-	player4 = DummyPlayer(4,3)
-
-	points = [0, 0, 0, 0]
-	players = [player1, player2, player3, player4]
-	for round in xrange(rounds):
-		deck = inititalDeck
-		newPoints = playRound(players, deck, cardsPerRound, round)
-		#newPoints = playRound(players, deck, round +1, round)
-		points = map(sum, zip(points, newPoints))
-		#print points
-'''
-
+			if cartaJugada.getSuit() == cartaInicial.getSuit():
+				if cartaJugada.getNumber() > cartaGanadoraActual.getNumber():
+					return True
+				else:
+					# Comprobamos que no tenga cartas mas altas del palo inicial
+					for carta in manoJugador:
+						if carta.getSuit() == cartaInicial.getSuit() and carta.getNumber() > cartaGanadoraActual.getNumber():
+							return False
+			else:
+				#Comprobamos que no tiene cartas del palo inicial
+				for carta in manoJugador:
+					if carta.getSuit() == cartaInicial.getSuit():
+						return False
+				if cartaJugada.getSuit() == cartaDePinte.getSuit():
+					return True
+				else:
+					# Llegados a este punto no tiro ni del palo inicial ni del palo de pinte, comprobamos que no tenga cartas de pinte
+					for carta in manoJugador:
+						if carta.getSuit() == cartaDePinte.getSuit():
+							return False
 
 def playGame(numeroDePartidas, tipoDePartida, cantidadDeRondas, tipoCambiaMano, barajarEntreRondas, numeroDeBazas, jugadores, jugadorPrimero):
 	
+	numeroDeJugadores = len(jugadores)
 	# Crea la baraja inicial en caso de que sean partidas estaticas
 	if barajarEntreRondas == 0:
 		barajaInicial = Deck()
 
 	# Informa a todo el mundo de los jugadores que hay
 	for jugador in jugadores:
-		jugador.setTotalPlayers(len(jugadores))
+		jugador.setTotalPlayers(numeroDeJugadores)
 
 	# Para cada partida
 	for partida in xrange(numeroDePartidas):
 
 		# Crea las puntuaciones iniciales
-		puntuaciones = []
-		for i in xrange(len(jugadores)):
-			puntuaciones.append(0)
+		puntuaciones = [0 for i in xrange(numeroDeJugadores)]
 
 		# Se crea la baraja que se usara en la partida
 		if barajarEntreRondas == 0:
@@ -110,46 +116,60 @@ def playGame(numeroDePartidas, tipoDePartida, cantidadDeRondas, tipoCambiaMano, 
 
 			# Calcular cartas si se pretenden repartir las maximas posibles
 			if numeroDeBazas == 0:
-				numeroDeBazas = 40/len(jugadores)
+				numeroDeBazas = 40/numeroDeJugadores
 
 			# Repartir las cartas
-			for jugador in xrange(len(jugadores)):
-				jugadores[jugador].setInitialHand(baraja.cards[jugador*numeroDeBazas:(jugador+1)*numeroDeBazas])
+			manoJugador = [[] for i in xrange(numeroDeJugadores)]
+			for jugador in xrange(numeroDeJugadores):
+				manoJugador[jugador] = baraja.cards[jugador*numeroDeBazas:(jugador+1)*numeroDeBazas]
+				jugadores[jugador].setInitialHand(manoJugador[jugador])
 
 			# Calcular el pinte
-			if numeroDeBazas*len(jugadores) == 40:
-				pinte = 39
+			if numeroDeBazas*numeroDeJugadores == 40:
+				pinte = baraja.cards[39]
 			else:
-				pinte = numeroDeBazas*len(jugadores)
+				pinte = baraja.cards[numeroDeBazas*numeroDeJugadores]
 
 			# Informar del pinte
 			for jugador in jugadores:
-				jugador.setTrump(baraja.cards[pinte])
+				jugador.setTrump(pinte)
 
-			bets = []
+
 			# Hacer apuestas
-			for offset in xrange(len(jugadores)):
-				jugadores[(offset+jugadorPrimero)%len(jugadores)].giveBets(bets)
-				newBet = jugadores[(offset+jugadorPrimero)%len(jugadores)].getBet()
-				print "El jugador", (offset+jugadorPrimero)%len(jugadores), "hace la apuesta", newBet
+			bets = []
+			apuestas = [0 for i in xrange(numeroDeJugadores)]
+			for offset in xrange(numeroDeJugadores):
+				idJugador = (offset+jugadorPrimero)%numeroDeJugadores
+				jugadores[idJugador].giveBets(bets)
+				newBet = jugadores[idJugador].getBet()
+				#print "El jugador", idJugador, "hace la apuesta", newBet
 				bets.append(newBet)
+				apuestas[idJugador] = newBet
 
 			# Para cada baza de la que se compone cada ronda
 			ganadorBaza = primero
+			bazas = [0 for i in xrange(numeroDeJugadores)]
 			for baza in xrange(numeroDeBazas):
-				
-				for carteo in xrange(len(jugadores)):
-					pass
+				# Calculamos el orden en que los jugadores lanzan sus cartas
+				orden = []
+				for i in xrange(numeroDeJugadores):
+					orden.append((i+ganadorBaza) % numeroDeJugadores)
+				cartasJugadas = []
+				# Solicitamos una carta a cada jugador, informando de que cartas han echado el resto de jugadores.
+				for idJugador in orden:
+					cartasJugadas.append( jugadores[idJugador].getCard(cartasJugadas, orden) )
+					if comprobarCarta(pinte, cartasJugadas, manoJugador[idJugador])== True:
+						manoJugador[idJugador].remove(cartasJugadas[-1])
+				# TO DO:
+				# Informar de las cartas jugadas por todos los jugadores y el ganador de la baza.
+				ganadorBaza = orden[cartaGanadora(pinte, cartasJugadas)]
+				bazas[ganadorBaza] += 1
 
-					# TODO: Echar carta
-
-				# Calcular ganador de la baza
-
-				# Informar del ganador a todo el mundo
-				# El ganador pasa a ser el primero
-
-
-
+			for i in xrange(numeroDeJugadores):
+				if apuestas[i] == bazas[i]:
+					puntuaciones[i] += (10+5*apuestas[i])
+				else:
+					puntuaciones[i] += -5*abs(apuestas[i]-bazas[i])
 
 			if tipoCambiaMano == 2:
 				primero = (primero+1)%len(jugadores)
@@ -204,15 +224,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
-def winnerCard(trumpCard, playedCards):
-	cards = len(playedCards)
-	winner = 0
-	for i in xrange(1,cards):
-		if playedCards[i].getSuit() == playedCards[winner].getSuit():
-			if playedCards[i].getNumber() > playedCards[winner].getNumber():
-				winner = i
-		elif playedCards[winner].getSuit() != trumpCard.getSuit():
-			if playedCards[i].getSuit() == trumpCard.getSuit():
-				winner = i
-	return winner

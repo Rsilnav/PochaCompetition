@@ -4,6 +4,6 @@ python:
 install: 
   - pip install coveralls
   - pip install nose
-script: nosetests --with-coverage --cover-erase
+script: nosetests --with-coverage --cover-erase --cover-package PochaCompetition
 after_success:
   coveralls
